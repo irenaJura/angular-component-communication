@@ -43,4 +43,9 @@ export class ProductListComponent implements OnInit {
       this.filteredProducts = this.products;
     }
   }
+
+  onFilterChange(value: string): void {
+    this.listFilter = value;
+    this.performFilter(this.listFilter);
+  }
 }
