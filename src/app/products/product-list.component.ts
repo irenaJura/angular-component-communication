@@ -9,7 +9,6 @@ import { ProductService } from './product.service';
 })
 export class ProductListComponent implements OnInit {
   pageTitle = 'Product List';
-  listFilter = '';
   showImage = false;
 
   imageWidth = 50;
@@ -18,6 +17,15 @@ export class ProductListComponent implements OnInit {
 
   filteredProducts: IProduct[] = [];
   products: IProduct[] = [];
+
+  private _listFilter: string = '';
+  get listFilter(): string {
+    return this._listFilter;
+  }
+  set listFilter(value: string) {
+    this._listFilter = value;
+    this.performFilter(this.listFilter);
+  }
 
   constructor(private productService: ProductService) { }
 
@@ -42,10 +50,5 @@ export class ProductListComponent implements OnInit {
     } else {
       this.filteredProducts = this.products;
     }
-  }
-
-  onFilterChange(value: string): void {
-    this.listFilter = value;
-    this.performFilter(this.listFilter);
   }
 }
