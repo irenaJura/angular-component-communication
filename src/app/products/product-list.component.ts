@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { NgModel } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
@@ -9,7 +9,7 @@ import { ProductService } from './product.service';
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent implements OnInit, AfterViewInit, OnDestroy {
   pageTitle = 'Product List';
   listFilter: string;
   showImage = false;
@@ -19,6 +19,7 @@ export class ProductListComponent implements OnInit {
 
   filteredProducts: IProduct[] = [];
   products: IProduct[] = [];
+  private _sub: Subscription;
 
   @ViewChild('filterElement') filterElementRef: ElementRef;
   @ViewChild(NgModel) filterInput: NgModel;
@@ -36,11 +37,17 @@ export class ProductListComponent implements OnInit {
   }
 
   ngAfterViewInit(): void {
-    this.filterInput?.valueChanges?.subscribe(
-      () => {
-        this.performFilter(this.filterInput.control.value)
-      }
-    )
+    if (this.filterInput && !this._sub) {
+      this._sub = this.filterInput?.valueChanges?.subscribe(
+        () => {
+          this.performFilter(this.filterInput.control.value)
+        }
+      )
+    };
+  }
+
+  ngOnDestroy(): void {
+    this._sub.unsubscribe();
   }
 
   toggleImage(): void {
