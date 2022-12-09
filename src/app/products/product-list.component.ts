@@ -1,6 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
-import { NgModel } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
 
 import { IProduct } from './product';
 import { ProductService } from './product.service';
@@ -9,9 +7,8 @@ import { ProductService } from './product.service';
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
-export class ProductListComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ProductListComponent implements OnInit {
   pageTitle = 'Product List';
-  listFilter: string;
   showImage = false;
   imageWidth = 50;
   imageMargin = 2;
@@ -19,10 +16,7 @@ export class ProductListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   filteredProducts: IProduct[] = [];
   products: IProduct[] = [];
-  private _sub: Subscription;
-
-  @ViewChild('filterElement') filterElementRef: ElementRef;
-  @ViewChild(NgModel) filterInput: NgModel;
+  includeDetail = true;
 
   constructor(private productService: ProductService) { }
 
@@ -30,24 +24,10 @@ export class ProductListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.productService.getProducts().subscribe({
       next: products => {
         this.products = products;
-        this.performFilter(this.listFilter);
+        this.performFilter();
       },
       error: err => this.errorMessage = err
     });
-  }
-
-  ngAfterViewInit(): void {
-    if (this.filterInput && !this._sub) {
-      this._sub = this.filterInput?.valueChanges?.subscribe(
-        () => {
-          this.performFilter(this.filterInput.control.value)
-        }
-      )
-    };
-  }
-
-  ngOnDestroy(): void {
-    this._sub.unsubscribe();
   }
 
   toggleImage(): void {
