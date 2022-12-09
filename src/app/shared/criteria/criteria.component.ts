@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { ProuductParameterService } from 'src/app/products/prouduct-parameter.service';
 
 @Component({
   selector: 'pm-criteria',
@@ -12,15 +13,14 @@ export class CriteriaComponent implements OnInit, AfterViewInit, OnChanges {
   @ViewChild('filterElement') filterElementRef: ElementRef;
   @Output() valueChange: EventEmitter<string> = new EventEmitter<string>();
 
-  private _listFilter: string;
   get listFilter(): string {
-    return this._listFilter;
+    return this.parameterService.filterBy;
   }
   set listFilter(value: string) {
-    this._listFilter = value;
-    this.valueChange.emit(this._listFilter);
+    this.parameterService.filterBy = value;
+    this.valueChange.emit(value);
   }
-  constructor() { }
+  constructor(private parameterService: ProuductParameterService) { }
 
   ngOnInit(): void {
   }

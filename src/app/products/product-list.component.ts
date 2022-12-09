@@ -3,6 +3,7 @@ import { CriteriaComponent } from '../shared/criteria/criteria.component';
 
 import { IProduct } from './product';
 import { ProductService } from './product.service';
+import { ProuductParameterService } from './prouduct-parameter.service';
 
 @Component({
   templateUrl: './product-list.component.html',
@@ -10,7 +11,6 @@ import { ProductService } from './product.service';
 })
 export class ProductListComponent implements OnInit, AfterViewInit {
   pageTitle = 'Product List';
-  showImage = false;
   imageWidth = 50;
   imageMargin = 2;
   errorMessage = ''
@@ -22,7 +22,17 @@ export class ProductListComponent implements OnInit, AfterViewInit {
   @ViewChild(CriteriaComponent) filterComponent: CriteriaComponent;
   parentListFilter: string; // to assign filter value from child component
 
-  constructor(private productService: ProductService) { }
+  get showImage(): boolean {
+    return this.parameterService.showImage;
+  }
+  set showImage(value: boolean) {
+    this.parameterService.showImage = value;
+  }
+
+  constructor(
+    private productService: ProductService,
+    private parameterService: ProuductParameterService
+    ) { }
 
   ngAfterViewInit(): void {
     this.parentListFilter = this.filterComponent.listFilter;
