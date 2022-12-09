@@ -19,7 +19,7 @@ export class ProductListComponent implements OnInit {
   products: IProduct[] = [];
   includeDetail = true;
 
-  @ViewChild(CriteriaComponent) filterComponent: CriteriaComponent;
+  @ViewChild(CriteriaComponent) filterComponent?: CriteriaComponent;
 
   get showImage(): boolean {
     return this.parameterService.showImage;
@@ -37,12 +37,15 @@ export class ProductListComponent implements OnInit {
     this.productService.getProducts().subscribe({
       next: products => {
         this.products = products;
-        this.filterComponent.listFilter = this.parameterService.filterBy;
+        this.performFilter(this.parameterService.filterBy);
       },
       error: err => this.errorMessage = err
     });
   }
 
+  ngAfterViewInit(): void {
+    this.filterComponent.listFilter = this.parameterService.filterBy;
+  }
 
   toggleImage(): void {
     this.showImage = !this.showImage;

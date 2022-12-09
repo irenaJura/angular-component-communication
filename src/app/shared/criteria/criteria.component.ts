@@ -15,13 +15,13 @@ export class CriteriaComponent implements OnInit, AfterViewInit, OnChanges {
 
   private _listFilter: string;
   get listFilter(): string {
-    return this._listFilter;
+    return this.parameterService.filterBy;
   }
   set listFilter(value: string) {
-    this._listFilter = value;
+    this.parameterService.filterBy = value;
     this.valueChange.emit(value);
   }
-  constructor() { }
+  constructor(private parameterService: ProductParameterService) { }
 
   ngOnInit(): void {
   }
@@ -34,7 +34,7 @@ export class CriteriaComponent implements OnInit, AfterViewInit, OnChanges {
     if (changes['hitCount'] && !changes['hitCount'].currentValue) {
       this.hitMessage = 'No matches found';
     } else {
-      this.hitMessage = 'Hits: ' + this.hitCount;
+      this.hitMessage = 'Hits:' + this.hitCount;
     }
   }
 
