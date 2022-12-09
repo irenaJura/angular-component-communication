@@ -1,15 +1,15 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CriteriaComponent } from '../shared/criteria/criteria.component';
 
 import { IProduct } from './product';
 import { ProductService } from './product.service';
-import { ProuductParameterService } from './prouduct-parameter.service';
+import { ProductParameterService } from './product-parameter.service';
 
 @Component({
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
-export class ProductListComponent implements OnInit, AfterViewInit {
+export class ProductListComponent implements OnInit {
   pageTitle = 'Product List';
   imageWidth = 50;
   imageMargin = 2;
@@ -20,7 +20,6 @@ export class ProductListComponent implements OnInit, AfterViewInit {
   includeDetail = true;
 
   @ViewChild(CriteriaComponent) filterComponent: CriteriaComponent;
-  parentListFilter: string; // to assign filter value from child component
 
   get showImage(): boolean {
     return this.parameterService.showImage;
@@ -31,18 +30,14 @@ export class ProductListComponent implements OnInit, AfterViewInit {
 
   constructor(
     private productService: ProductService,
-    private parameterService: ProuductParameterService
+    private parameterService: ProductParameterService
     ) { }
-
-  ngAfterViewInit(): void {
-    this.parentListFilter = this.filterComponent.listFilter;
-  }
 
   ngOnInit(): void {
     this.productService.getProducts().subscribe({
       next: products => {
         this.products = products;
-        this.performFilter(this.parentListFilter);
+        this.filterComponent.listFilter = this.parameterService.filterBy;
       },
       error: err => this.errorMessage = err
     });
@@ -63,6 +58,7 @@ export class ProductListComponent implements OnInit, AfterViewInit {
   }
 
   onValueChange(value: string): void {
+    this.parameterService.filterBy = value;
     this.performFilter(value);
   }
 }
