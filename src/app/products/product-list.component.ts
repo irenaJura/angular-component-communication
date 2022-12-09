@@ -27,7 +27,7 @@ export class ProductListComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.parentListFilter = this.filterComponent.listFilter;
   }
-  
+
   ngOnInit(): void {
     this.productService.getProducts().subscribe({
       next: products => {
@@ -50,5 +50,9 @@ export class ProductListComponent implements OnInit, AfterViewInit {
     } else {
       this.filteredProducts = this.products;
     }
+  }
+
+  onValueChange(value: string): void {
+    this.performFilter(value);
   }
 }
