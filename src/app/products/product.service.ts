@@ -11,6 +11,7 @@ import { IProduct } from './product';
 export class ProductService {
   private productsUrl = 'api/products';
   private products: IProduct[] | undefined;
+  currentProduct: IProduct | null;
 
   constructor(private http: HttpClient) { }
 
@@ -62,6 +63,7 @@ export class ProductService {
           const foundIndex = this.products.findIndex(item => item.id === id);
           if (foundIndex > -1) {
             this.products.splice(foundIndex, 1);
+            this.currentProduct = null;
           }
         }),
         catchError(this.handleError)
@@ -73,7 +75,10 @@ export class ProductService {
     return this.http.post<IProduct>(this.productsUrl, product, { headers })
       .pipe(
         tap(createdProduct => console.log('createProduct: ' + JSON.stringify(createdProduct))),
-        tap(data => this.products.push(data)),
+        tap(data => {
+          this.products.push(data);
+          this.currentProduct = data;
+        }),
         catchError(this.handleError)
       );
   }
