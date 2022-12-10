@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 
-import { catchError, Observable, of, tap, throwError } from 'rxjs';
+import { catchError, Observable, of, Subject, tap, throwError } from 'rxjs';
 
 import { IProduct } from './product';
 
@@ -11,7 +11,13 @@ import { IProduct } from './product';
 export class ProductService {
   private productsUrl = 'api/products';
   private products: IProduct[] | undefined;
-  currentProduct: IProduct | null;
+  private selectedProductSource = new Subject<IProduct | null>();
+  selectedProductChanges$ = this.selectedProductSource.asObservable();
+
+  changeSelectedProduct(selectedProduct: IProduct | null) {
+    // push selected product into its observable stream
+    this.selectedProductSource.next(selectedProduct);
+  }
 
   constructor(private http: HttpClient) { }
 
@@ -63,7 +69,7 @@ export class ProductService {
           const foundIndex = this.products.findIndex(item => item.id === id);
           if (foundIndex > -1) {
             this.products.splice(foundIndex, 1);
-            this.currentProduct = null;
+            this.changeSelectedProduct(null);
           }
         }),
         catchError(this.handleError)
@@ -77,7 +83,7 @@ export class ProductService {
         tap(createdProduct => console.log('createProduct: ' + JSON.stringify(createdProduct))),
         tap(data => {
           this.products.push(data);
-          this.currentProduct = data;
+          this.changeSelectedProduct(data);
         }),
         catchError(this.handleError)
       );

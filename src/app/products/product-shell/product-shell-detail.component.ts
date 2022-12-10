@@ -11,12 +11,15 @@ export class ProductShellDetailComponent implements OnInit {
   errorMessage = '';
 
   // Need to handle null to allow for no selected product.
-  get product(): IProduct | null{
-    return this.productService.currentProduct;
-  }
+  product: IProduct | null;
+
   constructor(private productService: ProductService) { }
 
   ngOnInit() {
+    this.productService.selectedProductChanges$.subscribe({
+      next: (data) => this.product = data,
+      error: (err) => this.errorMessage = err
+    });
   }
 
 }
