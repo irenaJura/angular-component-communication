@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 import { IProduct } from './product';
 import { ProductService } from './product.service';
@@ -8,10 +9,11 @@ import { ProductService } from './product.service';
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.css']
 })
-export class ProductDetailComponent implements OnInit {
+export class ProductDetailComponent implements OnInit, OnDestroy {
   pageTitle = 'Product Detail';
   product?: IProduct;
   errorMessage = '';
+  sub: Subscription;
 
   constructor(private productService: ProductService,
     private router: Router,
@@ -27,7 +29,7 @@ export class ProductDetailComponent implements OnInit {
   }
 
   getProduct(id: number) {
-    this.productService.getProduct(id).subscribe({
+    this.sub = this.productService.getProduct(id).subscribe({
       next: product => this.product = product,
       error: err => this.errorMessage = err
     });
@@ -35,5 +37,9 @@ export class ProductDetailComponent implements OnInit {
 
   onBack(): void {
     this.router.navigate(['/products']);
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 }

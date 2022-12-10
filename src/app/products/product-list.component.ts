@@ -4,6 +4,7 @@ import { CriteriaComponent } from '../shared/criteria/criteria.component';
 import { IProduct } from './product';
 import { ProductService } from './product.service';
 import { ProductParameterService } from './product-parameter.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   templateUrl: './product-list.component.html',
@@ -18,6 +19,7 @@ export class ProductListComponent implements OnInit {
   filteredProducts: IProduct[] = [];
   products: IProduct[] = [];
   includeDetail = true;
+  sub: Subscription;
 
   @ViewChild(CriteriaComponent) filterComponent?: CriteriaComponent;
 
@@ -34,7 +36,7 @@ export class ProductListComponent implements OnInit {
     ) { }
 
   ngOnInit(): void {
-    this.productService.getProducts().subscribe({
+    this.sub = this.productService.getProducts().subscribe({
       next: products => {
         this.products = products;
         this.performFilter(this.parameterService.filterBy);
@@ -63,5 +65,9 @@ export class ProductListComponent implements OnInit {
   onValueChange(value: string): void {
     this.parameterService.filterBy = value;
     this.performFilter(value);
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
   }
 }
